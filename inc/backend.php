@@ -20,8 +20,20 @@ function wps_admin_menu()
                                              FROM {$table_prefix}wps_visits
                                              WHERE date >= DATE_SUB('{$today}', INTERVAL DAYOFMONTH('{$today}')-1 DAY)");
 
+    $visitChartData = $wpdb->get_results("SELECT `date`,total_visits,unique_visits 
+                                                FROM {$table_prefix}wps_visits");
+
+    $visitDate = [];
+    $visittotal = [];
+    $uniqvisit = [];
+    foreach ($visitChartData as $item){
+        $visitDate[] = $item->date;
+        $visittotal[] = $item->total_visits;
+        $uniqvisit[] = $item->unique_visits;
+    }
+    array_walk($visitDate,'convertToJalali');
+
     include WPS_TPL . 'admin_page_wps.php';
-    wp_load_assets();
 }
 
 function wps_register_menu_page()
@@ -34,6 +46,7 @@ function wps_register_menu_page()
         'wps_admin_menu',
         'dashicons-chart-area',
         6);
+    wp_load_assets();
 }
 
 add_action('admin_menu', 'wps_register_menu_page');
@@ -42,4 +55,14 @@ function wp_load_assets()
 {
     wp_register_script('Chart.min.js', WPS_JS . 'Chart.min.js', array('jquery'));
     wp_enqueue_script('Chart.min.js');
+}
+
+function convertToJalali(&$date){
+    if (is_null($date) || empty($date)) {
+        return $date;
+    }
+    $dateExplode = explode('-',$date);
+    !function_exists('gregorian_to_jalali') ? include WPS_INC.'jdf.php' : null ;
+    $convertToShamsi = gregorian_to_jalali($dateExplode[0],$dateExplode[1],$dateExplode[2]);
+    $date = implode('-',$convertToShamsi);
 }
