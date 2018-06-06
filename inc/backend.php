@@ -31,6 +31,7 @@ function wps_admin_menu()
         $visittotal[] = $item->total_visits;
         $uniqvisit[] = $item->unique_visits;
     }
+
     array_walk($visitDate,'convertToJalali');
 
     include WPS_TPL . 'admin_page_wps.php';
@@ -58,9 +59,11 @@ function wp_load_assets()
 }
 
 function convertToJalali(&$date){
+
     if (is_null($date) || empty($date)) {
         return $date;
     }
+    
     $dateExplode = explode('-',$date);
     !function_exists('gregorian_to_jalali') ? include WPS_INC.'jdf.php' : null ;
     $convertToShamsi = gregorian_to_jalali($dateExplode[0],$dateExplode[1],$dateExplode[2]);
