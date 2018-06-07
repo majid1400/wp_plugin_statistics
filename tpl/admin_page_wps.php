@@ -57,6 +57,18 @@
                     <h2 class="hndle ui-sortable-handle"><span>نمودار</span></h2>
                     <div class="inside">
                         <div class="main">
+                            <div class="form-action">
+                                <form action="#" method="get">
+                                    <input type="hidden" name="page" value="wps-stat.php">
+
+                                    <label for="start">شروع تاریخ</label>
+                                    <input type="date" name="startDate" class="selectDate" id="start">
+
+                                    <label for="start">پایان تاریخ</label>
+                                    <input type="date" name="endDate" class="selectDate" id="end">
+                                    <input type="submit" value="فیلتر کردن">
+                                </form>
+                            </div>
                             <canvas id="myChart" width="400" height="400"></canvas>
                             <script>
                                 var ctx = document.getElementById("myChart");
@@ -84,7 +96,7 @@
                                                 'rgba(255, 159, 64, 1)'
                                             ],
                                             borderWidth: 2
-                                        },{
+                                        }, {
                                             label: 'تعداد بازدید های یکتا',
                                             data: <?php echo json_encode($uniqvisit) ?>,
                                             backgroundColor: [

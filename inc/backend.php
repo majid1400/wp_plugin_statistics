@@ -20,8 +20,15 @@ function wps_admin_menu()
                                              FROM {$table_prefix}wps_visits
                                              WHERE date >= DATE_SUB('{$today}', INTERVAL DAYOFMONTH('{$today}')-1 DAY)");
 
+    $where = " WHERE 1 ";
+    if (isset($_GET['startDate']) and !empty($_GET['startDate'])
+        and isset($_GET['endDate']) and !empty($_GET['endDate'])){
+        $startDate = esc_sql($_GET['startDate']);
+        $endDate = esc_sql($_GET['endDate']);
+        $where.="AND Date between '{$startDate}' AND '{$endDate}'";
+    }
     $visitChartData = $wpdb->get_results("SELECT `date`,total_visits,unique_visits 
-                                                FROM {$table_prefix}wps_visits");
+                                                FROM {$table_prefix}wps_visits{$where}");
 
     $visitDate = [];
     $visittotal = [];
