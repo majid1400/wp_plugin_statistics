@@ -44,7 +44,13 @@ function wps_admin_menu()
     include WPS_TPL . 'admin_page_wps.php';
 }
 function wps_admin_menu_setting(){
-    echo 'hello';
+    $tabs = array(
+        'general'    =>     'عمومی',
+        'messages'   =>     'اطلاع رسانی',
+        'about'      =>     'درباره ما',
+    );
+    $currentTab = isset($_GET['tab']) ? $_GET['tab'] : 'general';
+    include WPS_TPL . 'admin_page_setting.php';
 }
 function wps_register_menu_page()
 {
