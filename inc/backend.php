@@ -23,8 +23,8 @@ function wps_admin_menu()
     $where = " WHERE 1 ";
     if (isset($_GET['startDate']) and !empty($_GET['startDate'])
         and isset($_GET['endDate']) and !empty($_GET['endDate'])){
-        $startDate = esc_sql($_GET['startDate']);
-        $endDate = esc_sql($_GET['endDate']);
+        $startDate = convertTogregorian(esc_sql($_GET['startDate']));
+        $endDate = convertTogregorian(esc_sql($_GET['endDate']));
         $where.="AND Date between '{$startDate}' AND '{$endDate}'";
     }
     $visitChartData = $wpdb->get_results("SELECT `date`,total_visits,unique_visits 
@@ -62,7 +62,18 @@ add_action('admin_menu', 'wps_register_menu_page');
 function wp_load_assets()
 {
     wp_register_script('Chart.min.js', WPS_JS . 'Chart.min.js', array('jquery'));
+    wp_register_script('persian-date.min.js', WPS_JS . 'persian-date.min.js', array('jquery'));
+    wp_register_script('persian-datepicker.min.js', WPS_JS . 'persian-datepicker.js', array('jquery','persian-date.min.js'));
+    wp_register_script('wps.admin.js', WPS_JS . 'wps.admin.js', array('jquery','Chart.min.js','persian-date.min.js', 'persian-datepicker.min.js'));
+
     wp_enqueue_script('Chart.min.js');
+    wp_enqueue_script('persian-date.min.js');
+    wp_enqueue_script('persian-datepicker.min.js');
+    wp_enqueue_script('wps.admin.js');
+
+    wp_register_style('persian-datepicker.min.css', WPS_CSS.'persian-datepicker.min.css');
+    wp_enqueue_style('persian-datepicker.min.css');
+
 }
 
 function convertToJalali(&$date){
@@ -75,4 +86,11 @@ function convertToJalali(&$date){
     !function_exists('gregorian_to_jalali') ? include WPS_INC.'jdf.php' : null ;
     $convertToShamsi = gregorian_to_jalali($dateExplode[0],$dateExplode[1],$dateExplode[2]);
     $date = implode('-',$convertToShamsi);
+}
+
+function convertTogregorian($data){
+    $datePart = explode('-',$data);
+    !function_exists('gregorian_to_jalali') ? include WPS_INC.'jdf.php' : null ;
+    $newDate = jalali_to_gregorian($datePart[0],$datePart[1],$datePart[2]);
+    return implode('-',$newDate);
 }
